@@ -180,6 +180,12 @@ view: order_items {
     filters: [isreturned: "yes"]
   }
 
+  measure: num_repeat_orders {
+    type: count_distinct
+    filters: [cust_behavior.is_repeat_customer: "yes"]
+    sql: ${order_id} ;;
+  }
+
   measure: num_total_orders {
     type: count_distinct
     sql: ${order_id} ;;
@@ -188,6 +194,12 @@ view: order_items {
   measure: num_total_users {
     type: count_distinct
     sql: ${user_id} ;;
+  }
+
+  measure: percent_repeat_customers{
+    type: number
+    sql: ${num_repeat_orders}/${num_total_orders} ;;
+    value_format_name: percent_2
   }
 
   measure: percent_users_with_return {
@@ -204,6 +216,7 @@ view: order_items {
     type:sum
     filters: [iscomplete: "yes"]
     sql: ${margin} ;;
+    drill_fields: [product_dd*]
   }
 
   measure: total_gross_revenue {
@@ -222,6 +235,10 @@ view: order_items {
   measure: count {
     type: count
     drill_fields: [detail*]
+  }
+
+  set: product_dd {
+    fields: [products.name,total_gross_margin,total_gross_revenue, gross_margin_percent]
   }
 
   # ----- Sets of fields for drilling ------

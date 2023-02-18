@@ -31,6 +31,7 @@ view: users {
     type: string
     map_layer_name: countries
     sql: ${TABLE}.country ;;
+    drill_fields: [location_details*]
   }
 
   dimension_group: created {
@@ -108,6 +109,10 @@ view: users {
   measure: count {
     type: count
     drill_fields: [id, last_name, first_name, order_items.count, events.count]
+  }
+
+  set: location_details {
+    fields: [state,city]
   }
 
   set: user_details {

@@ -1,6 +1,7 @@
 include: "/views/order_items.view.lkml"
 include: "/views/users.view.lkml"
 include: "/views/products.view.lkml"
+include: "/derived_views/cust_behavior.view.lkml"
 
 explore: order_details {
   from: order_items
@@ -13,5 +14,10 @@ explore: order_details {
     type: inner
     sql_on: ${order_details.product_id}=${products.id} ;;
     relationship: many_to_one
+  }
+  join: cust_behavior {
+    type: inner
+    sql_on: ${order_details.user_id}=${cust_behavior.user_id} ;;
+    relationship:many_to_one
   }
 }

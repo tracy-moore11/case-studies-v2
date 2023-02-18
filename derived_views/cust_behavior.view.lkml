@@ -4,6 +4,7 @@ view: cust_behavior {
       column: user_id {}
       column: num_total_orders {}
       column: total_gross_revenue {}
+      column: total_sale_price {}
       column: first_order_date {}
       column: latest_order_date {}
     }
@@ -17,9 +18,13 @@ view: cust_behavior {
     description: ""
     type: number
   }
+
+  dimension: total_sale_price {
+    type: number
+    value_format_name: usd
+  }
   dimension: total_gross_revenue {
-    description: ""
-    value_format: "$#,##0.00"
+    value_format_name: usd
     type: number
   }
   dimension: first_order_date {
@@ -68,11 +73,27 @@ view: cust_behavior {
   measure: average_lifetime_revenue {
     type: average
     sql: ${total_gross_revenue} ;;
+    value_format_name: usd
+  }
+
+  measure: average_spend {
+    type: average
+    sql: ${total_sale_price} ;;
+    value_format_name: usd
+  }
+
+  measure: total_customers {
+    type: count
   }
 
   measure: total_lifetime_orders {
     type: sum
     sql: ${num_total_orders} ;;
+  }
+
+  measure: total_lifetime_sales {
+    type: sum
+    sql: ${total_sale_price} ;;
   }
 
   measure: total_lifetime_revenue {
