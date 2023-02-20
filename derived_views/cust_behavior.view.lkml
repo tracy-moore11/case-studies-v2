@@ -62,7 +62,7 @@ view: cust_behavior {
     tiers: [0, 5, 20, 50, 100, 500, 1000]
     sql: ${total_gross_revenue} ;;
     style:  integer
-    value_format_name: usd
+    value_format_name: usd_0
   }
 
   measure: average_lifetime_orders {

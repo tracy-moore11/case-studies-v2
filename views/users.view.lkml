@@ -48,6 +48,11 @@ view: users {
     sql: ${TABLE}.created_at ;;
   }
 
+  dimension: days_since_signup {
+    type: number
+    sql: date_diff(current_date,${created_date},day) ;;
+  }
+
   dimension: email {
     type: string
     sql: ${TABLE}.email ;;
@@ -78,6 +83,11 @@ view: users {
     sql: ${TABLE}.longitude ;;
   }
 
+  dimension: months_since_signup {
+    type: number
+    sql: date_diff(current_date,${created_date},month) ;;
+  }
+
   dimension: postal_code {
     type: string
     sql: ${TABLE}.postal_code ;;
@@ -104,6 +114,16 @@ view: users {
   measure: average_age {
     type: average
     sql: ${age} ;;
+  }
+
+  measure: average_days_since_signup {
+    type: average
+    sql: ${days_since_signup} ;;
+  }
+
+  measure: average_months_since_signup {
+    type: average
+    sql: ${months_since_signup} ;;
   }
 
   measure: count {
