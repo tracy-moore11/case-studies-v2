@@ -15,7 +15,6 @@ view: users {
     sql: ${TABLE}.age ;;
   }
 
-
   dimension: age_tier {
     type: tier
     tiers: [15, 26, 36, 51, 66]
@@ -46,6 +45,18 @@ view: users {
       year
     ]
     sql: ${TABLE}.created_at ;;
+  }
+
+  dimension: created_last_month {
+    type: yesno
+    sql: ${created_date}>=date_trunc(date_sub(current_date(), interval 1 month),month)
+      and ${created_date}<date_trunc(current_date(),month);;
+  }
+
+  dimension: created_last_year {
+    type: yesno
+    sql: ${created_date}>=date_trunc(date_sub(current_date(), interval 1 year),year)
+      and ${created_date}<date_trunc(current_date(),year);;
   }
 
   dimension: days_since_signup {
@@ -86,6 +97,13 @@ view: users {
   dimension: months_since_signup {
     type: number
     sql: date_diff(current_date,${created_date},month) ;;
+  }
+
+  dimension: months_since_signup_cohort {
+    type: tier
+    tiers: [0,1,3,7]
+    sql: ${months_since_signup} ;;
+    style: integer
   }
 
   dimension: postal_code {

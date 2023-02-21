@@ -24,6 +24,11 @@ view: order_items {
     sql: ${TABLE}.created_at ;;
   }
 
+  dimension: customer_lifespan {
+    type: number
+    sql: date_diff(${cust_behavior.latest_order_date},${users.created_date},month) ;;
+  }
+
   dimension_group: delivered {
     type: time
     timeframes: [
@@ -36,6 +41,11 @@ view: order_items {
       year
     ]
     sql: ${TABLE}.delivered_at ;;
+  }
+
+  dimension: has_order_last_90_days {
+    type: yesno
+    sql: date_diff(current_date,${cust_behavior.latest_order_date},day)<=90 ;;
   }
 
   dimension: inventory_item_id {
@@ -124,6 +134,12 @@ view: order_items {
   measure: average_cost {
     type: average
     sql: ${products.cost} ;;
+  }
+
+  measure: average_customer_lifespan {
+    type: average
+    sql: ${customer_lifespan} ;;
+    value_format_name: decimal_0
   }
 
   measure: average_gross_margin {
@@ -230,6 +246,12 @@ view: order_items {
     type: sum
     sql: ${sale_price} ;;
     value_format_name: usd
+  }
+
+  measure: total_users_last_90_days {
+    type: count_distinct
+    sql: ${user_id} ;;
+    filters: [has_order_last_90_days: "yes"]
   }
 
   measure: count {

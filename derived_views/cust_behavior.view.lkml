@@ -9,6 +9,8 @@ view: cust_behavior {
       column: latest_order_date {}
     }
   }
+
+
   dimension: user_id {
     primary_key: yes
     description: ""
@@ -29,7 +31,7 @@ view: cust_behavior {
   }
   dimension: first_order_date {
     description: ""
-    type: number
+    type: date
   }
 
   dimension: days_since_last_order {
@@ -48,7 +50,7 @@ view: cust_behavior {
   }
   dimension: latest_order_date {
     description: ""
-    type: number
+    type: date
   }
 
   dimension: customer_lifetime_orders {
@@ -64,6 +66,8 @@ view: cust_behavior {
     style:  integer
     value_format_name: usd_0
   }
+
+
 
   measure: average_lifetime_orders {
     type: average
@@ -82,6 +86,8 @@ view: cust_behavior {
     value_format_name: usd
   }
 
+
+
   measure: total_customers {
     type: count
   }
@@ -99,5 +105,6 @@ view: cust_behavior {
   measure: total_lifetime_revenue {
     type: sum
     sql: ${total_gross_revenue} ;;
+    value_format_name: usd
   }
 }
