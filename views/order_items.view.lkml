@@ -54,6 +54,11 @@ view: order_items {
     sql: ${TABLE}.inventory_item_id ;;
   }
 
+  dimension: iscancelled {
+    type: yesno
+    sql: ${status}='Cancelled ;;
+  }
+
   dimension: iscomplete {
     type: yesno
     sql: ${status}!="Cancelled" and ${returned_raw} is null ;;
