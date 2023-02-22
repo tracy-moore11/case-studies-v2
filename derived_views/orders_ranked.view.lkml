@@ -29,6 +29,11 @@ order_rank as (
     sql: date_diff(${order_start_date_date},${previous_order_date_date},day) ;;
   }
 
+  dimension: has_order_last_30_days {
+    type: yesno
+    sql: date_diff(current_date,${order_start_date_date},day)<=30 ;;
+  }
+
   dimension: hassubsequentorders {
     type: yesno
     sql: ${order_sequence}=1 and ${next_order_date_date} is not null ;;
@@ -39,8 +44,22 @@ order_rank as (
     sql: ${order_sequence}=1 ;;
   }
 
+  dimension: isonetimecustomer {
+    type: yesno
+    sql: ${isfirstpurchase} and ${next_order_id} is null ;;
+  }
+
   dimension_group: previous_order_date {
     type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
     sql: ${TABLE}.last_order_date ;;
   }
 
@@ -56,6 +75,15 @@ order_rank as (
 
   dimension_group: next_order_date {
     type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
     sql: ${TABLE}.next_order_date ;;
   }
 
@@ -67,18 +95,38 @@ order_rank as (
 
   dimension_group: order_start_date {
     type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
     sql: ${TABLE}.order_start_date ;;
   }
 
   dimension_group: order_end_date {
     type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
     sql: ${TABLE}.order_end_date ;;
   }
 
   dimension: repeat_purchase_60_days{
     type: yesno
-    sql: ${daysbetweenorders}<=60 ;;
+    sql: ${daysbetweenorders}<=60 and ${previous_order_id} is not null ;;
   }
+
+
 
   dimension: order_sequence {
     type: number
@@ -93,11 +141,13 @@ order_rank as (
   measure: average_daysbetweenorders {
     type: average
     sql: ${daysbetweenorders} ;;
+    value_format_name: decimal_0
   }
 
   measure: repeat_purchase_rate_60_days{
     type: number
     sql:${total_60_day_repeat_customers}/nullif(${total_customers},0)  ;;
+    value_format_name: percent_2
   }
 
   measure: total_60_day_repeat_customers {
@@ -108,7 +158,7 @@ order_rank as (
 
   measure: total_customers {
     type: count_distinct
-    sql:${user_id}
+    sql:${user_id} ;;
   }
 
   measure: total_orders {
@@ -120,22 +170,17 @@ order_rank as (
     filters: [order_sequence:">1"]
   }
 
-  measure: total_users {
-    type: count_distinct
-    sql:${user_id} ;;
-  }
-
   set: detail {
     fields: [
       user_id,
       order_id,
-      order_start_date_time,
-      order_end_date_time,
+      order_start_date_date,
+      order_end_date_date,
       order_sequence,
       previous_order_id,
-      previous_order_date_time,
+      previous_order_date_date,
       next_order_id,
-      next_order_date_time
+      next_order_date_date
     ]
   }
 }

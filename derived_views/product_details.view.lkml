@@ -18,7 +18,7 @@ view: product_details {
   measure: count {
     type: count
     label: "Total Purchases"
-    drill_fields: [detail*]
+    drill_fields: [brand_drill*]
   }
 
   dimension: user_id {
@@ -29,17 +29,18 @@ view: product_details {
   dimension: name {
     type: string
     sql: ${TABLE}.name ;;
+    can_filter:no
   }
 
   dimension: brand {
     type: string
     sql: ${TABLE}.brand ;;
-    drill_fields: [products*]
   }
 
   dimension: category {
     type: string
     sql: ${TABLE}.category ;;
+    drill_fields: [category_drill*]
   }
 
   dimension: hasrepeat {
@@ -115,8 +116,12 @@ view: product_details {
     filters: [category_purchase_rank: ">1"]
   }
 
-  set: products {
-    fields: [category, name]
+  set: category_drill {
+    fields: [name]
+  }
+
+  set: brand_drill {
+    fields: [brand,category,name, count]
   }
 
   set: detail {

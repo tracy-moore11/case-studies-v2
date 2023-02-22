@@ -26,7 +26,7 @@ view: order_items {
 
   dimension: customer_lifespan {
     type: number
-    sql: date_diff(${cust_behavior.latest_order_date},${users.created_date},month) ;;
+    sql: date_diff(${cust_behavior.latest_order_date},${users.created_date},day) ;;
   }
 
   dimension_group: delivered {
@@ -41,6 +41,11 @@ view: order_items {
       year
     ]
     sql: ${TABLE}.delivered_at ;;
+  }
+
+  dimension: has_order_last_30_days {
+    type: yesno
+    sql: date_diff(current_date,${cust_behavior.latest_order_date},day)<=30 ;;
   }
 
   dimension: has_order_last_90_days {
@@ -77,6 +82,11 @@ view: order_items {
   dimension: margin {
     type: number
     sql: ${sale_price}-${products.cost} ;;
+  }
+
+  dimension:months_since_signup {
+    type: number
+    sql: date_diff(${order_details.created_date},${users.created_date},month) ;;
   }
 
   dimension: order_id {
@@ -128,6 +138,11 @@ view: order_items {
     sql: ${TABLE}.status ;;
   }
 
+  dimension: days_to_first_order {
+    type: number
+    sql: date_diff(${cust_behavior.first_order_date},${users.created_date},day) ;;
+  }
+
   dimension: user_id {
     type: number
     # hidden: yes
@@ -162,6 +177,12 @@ view: order_items {
   measure: average_sale_price {
     type: average
     sql: ${sale_price} ;;
+  }
+
+  measure: average_days_to_first_order {
+    type: average
+    sql: ${days_to_first_order} ;;
+    value_format_name: decimal_0
   }
 
   measure: cumulative_total_sales {
