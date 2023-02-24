@@ -132,12 +132,6 @@ view: order_items {
     sql: ${user_id} ;;
   }
 
-  measure: percent_repeat_customers{
-    type: number
-    sql: ${customers_cv.num_repeat_orders}/${num_total_orders} ;;
-    value_format_name: percent_2
-  }
-
   measure: percent_users_with_return {
     type: number
     sql: ${number_customers_returning_items}/nullif(${num_total_users},0) ;;
@@ -154,12 +148,6 @@ view: order_items {
     type: sum
     sql: ${sale_price} ;;
     value_format_name: usd
-  }
-
-  measure: total_users_last_90_days {
-    type: count_distinct
-    sql: ${user_id} ;;
-    filters: [customers_cv.has_order_last_90_days: "yes"]
   }
 
   measure: count {
