@@ -24,10 +24,10 @@ view: order_items {
     sql: ${TABLE}.created_at ;;
   }
 
-  dimension: customer_lifespan {
-    type: number
-    sql: date_diff(${cust_behavior.latest_order_date},${users.created_date},day) ;;
-  }
+  # dimension: customer_lifespan {
+  #   type: number
+  #   sql: date_diff(${cust_behavior.latest_order_date},${users.created_date},day) ;;
+  # }
 
   dimension_group: delivered {
     type: time
@@ -69,25 +69,25 @@ view: order_items {
     sql: ${status}!="Cancelled" and ${returned_raw} is null ;;
   }
 
-  dimension: is_new_customer {
-    type: yesno
-    sql: date_diff(current_date,${users.created_date},day)<=90 ;;
-  }
+  # dimension: is_new_customer {
+  #   type: yesno
+  #   sql: date_diff(current_date,${users.created_date},day)<=90 ;;
+  # }
 
   dimension: isreturned {
     type: yesno
     sql: ${returned_raw} is not null ;;
   }
 
-  dimension: margin {
-    type: number
-    sql: ${sale_price}-${products.cost} ;;
-  }
+  # dimension: margin {
+  #   type: number
+  #   sql: ${sale_price}-${products.cost} ;;
+  # }
 
-  dimension:months_since_signup {
-    type: number
-    sql: date_diff(${order_details.created_date},${users.created_date},month) ;;
-  }
+  # dimension:months_since_signup {
+  #   type: number
+  #   sql: date_diff(${order_details.created_date},${users.created_date},month) ;;
+  # }
 
   dimension: order_id {
     type: number
@@ -138,10 +138,10 @@ view: order_items {
     sql: ${TABLE}.status ;;
   }
 
-  dimension: days_to_first_order {
-    type: number
-    sql: date_diff(${cust_behavior.first_order_date},${users.created_date},day) ;;
-  }
+  # dimension: days_to_first_order {
+  #   type: number
+  #   sql: date_diff(${cust_behavior.first_order_date},${users.created_date},day) ;;
+  # }
 
   dimension: user_id {
     type: number
@@ -151,39 +151,39 @@ view: order_items {
 
   ##--MEASURES--##
 
-  measure: average_cost {
-    type: average
-    sql: ${products.cost} ;;
-  }
+  # measure: average_cost {
+  #   type: average
+  #   sql: ${products.cost} ;;
+  # }
 
-  measure: average_customer_lifespan {
-    type: average
-    sql: ${customer_lifespan} ;;
-    value_format_name: decimal_0
-  }
+  # measure: average_customer_lifespan {
+  #   type: average
+  #   sql: ${customer_lifespan} ;;
+  #   value_format_name: decimal_0
+  # }
 
-  measure: average_gross_margin {
-    type: average
-    filters: [iscomplete: "yes"]
-    sql: ${margin} ;;
-  }
+  # measure: average_gross_margin {
+  #   type: average
+  #   filters: [iscomplete: "yes"]
+  #   sql: ${margin} ;;
+  # }
 
-  measure: average_spend_per_customer {
-    type: number
-    sql: ${total_sale_price}/${num_total_users} ;;
-    value_format_name: usd
-  }
+  # measure: average_spend_per_customer {
+  #   type: number
+  #   sql: ${total_sale_price}/${num_total_users} ;;
+  #   value_format_name: usd
+  # }
 
   measure: average_sale_price {
     type: average
     sql: ${sale_price} ;;
   }
 
-  measure: average_days_to_first_order {
-    type: average
-    sql: ${days_to_first_order} ;;
-    value_format_name: decimal_0
-  }
+  # measure: average_days_to_first_order {
+  #   type: average
+  #   sql: ${days_to_first_order} ;;
+  #   value_format_name: decimal_0
+  # }
 
   measure: cumulative_total_sales {
     type: running_total
@@ -195,11 +195,11 @@ view: order_items {
     sql: min(${created_date}) ;;
   }
 
-  measure: gross_margin_percent {
-    type: number
-    sql: ${total_gross_margin}/nullif(${total_gross_revenue},0) ;;
-    value_format_name: percent_2
-  }
+  # measure: gross_margin_percent {
+  #   type: number
+  #   sql: ${total_gross_margin}/nullif(${total_gross_revenue},0) ;;
+  #   value_format_name: percent_2
+  # }
 
   measure: item_return_rate {
     type: number
@@ -249,18 +249,18 @@ view: order_items {
     sql: ${number_customers_returning_items}/nullif(${num_total_users},0) ;;
   }
 
-  measure:total_cost {
-    type: sum
-    sql: ${products.cost} ;;
-  }
+  # measure:total_cost {
+  #   type: sum
+  #   sql: ${products.cost} ;;
+  # }
 
-  measure:total_gross_margin {
-    type:sum
-    filters: [iscomplete: "yes"]
-    sql: ${margin} ;;
-    value_format_name: usd
-    drill_fields: [product_dd*]
-  }
+  # measure:total_gross_margin {
+  #   type:sum
+  #   filters: [iscomplete: "yes"]
+  #   sql: ${margin} ;;
+  #   value_format_name: usd
+  #   drill_fields: [product_dd*]
+  # }
 
   measure: total_gross_revenue {
     type: sum
@@ -286,9 +286,9 @@ view: order_items {
     drill_fields: [detail*]
   }
 
-  set: product_dd {
-    fields: [products.name,total_gross_margin,total_gross_revenue, gross_margin_percent]
-  }
+  # set: product_dd {
+  #   fields: [products.name,total_gross_margin,total_gross_revenue, gross_margin_percent]
+  # }
 
   # ----- Sets of fields for drilling ------
   set: detail {

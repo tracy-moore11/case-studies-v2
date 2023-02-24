@@ -1,2 +1,0 @@
-view: users_crossview {
-  }

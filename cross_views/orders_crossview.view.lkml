@@ -1,3 +1,0 @@
-view: orders_crossview {
-
-}
