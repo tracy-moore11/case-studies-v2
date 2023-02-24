@@ -70,6 +70,18 @@ view: products {
     fields: [category, name]
   }
 
+  parameter: select_category {
+    type: string
+    suggest_dimension: category
+    default_value: "Jeans"
+  }
+
+  parameter: selected_brand {
+    type: string
+    suggest_dimension: brand
+    default_value: "Calvin Klein"
+  }
+
   # ----- Sets of fields for drilling ------
   set: detail {
     fields: [

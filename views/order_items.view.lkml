@@ -258,6 +258,7 @@ view: order_items {
     type:sum
     filters: [iscomplete: "yes"]
     sql: ${margin} ;;
+    value_format_name: usd
     drill_fields: [product_dd*]
   }
 
