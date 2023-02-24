@@ -3,6 +3,7 @@ include: "/derived_views/orders_ranked.view.lkml"
 include: "/derived_views/cust_behavior.view.lkml"
 
 explore: customers {
+  persist_with: daily_etl
   from: users
   join: cust_behavior {
     type: left_outer

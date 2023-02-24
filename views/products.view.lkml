@@ -22,6 +22,7 @@ view: products {
 
   dimension: cost {
     type: number
+    hidden: yes
     sql: ${TABLE}.cost ;;
   }
 
@@ -35,30 +36,9 @@ view: products {
     sql: ${cost} ;;
   }
 
-  dimension: department {
-    type: string
-    sql: ${TABLE}.department ;;
-  }
-
-  dimension: distribution_center_id {
-    type: number
-    # hidden: yes
-    sql: ${TABLE}.distribution_center_id ;;
-  }
-
   dimension: name {
     type: string
     sql: ${TABLE}.name ;;
-  }
-
-  dimension: retail_price {
-    type: number
-    sql: ${TABLE}.retail_price ;;
-  }
-
-  dimension: sku {
-    type: string
-    sql: ${TABLE}.sku ;;
   }
 
   measure: count {

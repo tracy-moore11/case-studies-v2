@@ -7,11 +7,13 @@ view: users {
   dimension: id {
     primary_key: yes
     type: number
+    hidden: yes
     sql: ${TABLE}.id ;;
   }
 
   dimension: age {
     type: number
+    hidden: yes
     sql: ${TABLE}.age ;;
   }
 
@@ -21,6 +23,7 @@ view: users {
     sql: ${age} ;;
     style:  integer
   }
+
   dimension: city {
     type: string
     sql: ${TABLE}.city ;;
@@ -64,34 +67,9 @@ view: users {
     sql: date_diff(current_date,${created_date},day) ;;
   }
 
-  dimension: email {
-    type: string
-    sql: ${TABLE}.email ;;
-  }
-
-  dimension: first_name {
-    type: string
-    sql: ${TABLE}.first_name ;;
-  }
-
   dimension: gender {
     type: string
     sql: ${TABLE}.gender ;;
-  }
-
-  dimension: last_name {
-    type: string
-    sql: ${TABLE}.last_name ;;
-  }
-
-  dimension: latitude {
-    type: number
-    sql: ${TABLE}.latitude ;;
-  }
-
-  dimension: longitude {
-    type: number
-    sql: ${TABLE}.longitude ;;
   }
 
   dimension: months_since_signup {
@@ -106,19 +84,9 @@ view: users {
     style: integer
   }
 
-  dimension: postal_code {
-    type: string
-    sql: ${TABLE}.postal_code ;;
-  }
-
   dimension: state {
     type: string
     sql: ${TABLE}.state ;;
-  }
-
-  dimension: street_address {
-    type: string
-    sql: ${TABLE}.street_address ;;
   }
 
   dimension: traffic_source {
