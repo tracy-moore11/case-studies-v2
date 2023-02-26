@@ -23,8 +23,13 @@ view: order_details_cv {
 
   dimension: customer_lifespan {
     type: number
-    sql: date_diff(${cust_behavior.latest_order_date},${users.created_date},day) ;;
+    sql: date_diff(${cust_behavior.latest_order_date},${users.created_date},month) ;;
     view_label: "Users"
+  }
+
+  dimension: days_since_signup {
+    type: number
+    sql: date_diff(${order_details.created_date},${users.created_date},day) ;;
   }
 
   dimension: is_new_customer {
@@ -36,7 +41,6 @@ view: order_details_cv {
   dimension:months_since_signup {
     type: number
     sql: date_diff(${order_details.created_date},${users.created_date},month) ;;
-    view_label: "Users"
   }
 
   dimension: days_to_first_order {

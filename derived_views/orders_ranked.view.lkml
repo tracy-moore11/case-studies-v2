@@ -34,9 +34,9 @@ order_rank as (
     sql: date_diff(current_date,${order_start_date_date},day)<=30 ;;
   }
 
-  dimension: hassubsequentorders {
+  dimension: hassubsequentorder {
     type: yesno
-    sql: ${order_sequence}=1 and ${next_order_date_date} is not null ;;
+    sql: ${next_order_id} is not null ;;
   }
 
   dimension: isfirstpurchase {
@@ -123,7 +123,7 @@ order_rank as (
 
   dimension: repeat_purchase_60_days{
     type: yesno
-    sql: ${daysbetweenorders}<=60 and ${previous_order_id} is not null ;;
+    sql: ${daysbetweenorders}<=60 AND ${order_sequence}=2 ;;
   }
 
 
@@ -141,6 +141,13 @@ order_rank as (
   measure: average_daysbetweenorders {
     type: average
     sql: ${daysbetweenorders} ;;
+    value_format_name: decimal_0
+  }
+
+  measure: average_daysbetween_firstandsecond_orders {
+    type: average
+    sql: ${daysbetweenorders} ;;
+    filters: [order_sequence: "2"]
     value_format_name: decimal_0
   }
 

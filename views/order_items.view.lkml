@@ -135,6 +135,7 @@ view: order_items {
   measure: percent_users_with_return {
     type: number
     sql: ${number_customers_returning_items}/nullif(${num_total_users},0) ;;
+    value_format_name: percent_2
   }
 
   measure: total_gross_revenue {
