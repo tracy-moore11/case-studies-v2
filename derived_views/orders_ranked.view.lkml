@@ -151,6 +151,11 @@ order_rank as (
     value_format_name: decimal_0
   }
 
+  measure: repeat_purchase_rate {
+    type: number
+    sql: 1.0*(${total_repeat_orders}/nullif(${total_orders},0)) ;;
+  }
+
   measure: repeat_purchase_rate_60_days{
     type: number
     sql:${total_60_day_repeat_customers}/nullif(${total_customers},0)  ;;
