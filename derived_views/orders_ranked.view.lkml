@@ -49,6 +49,11 @@ order_rank as (
     sql: ${isfirstpurchase} and ${next_order_id} is null ;;
   }
 
+  dimension: isrepeatorder {
+    type: yesno
+    sql: ${order_sequence}>1;;
+  }
+
   dimension_group: previous_order_date {
     type: time
     timeframes: [
@@ -154,6 +159,7 @@ order_rank as (
   measure: repeat_purchase_rate {
     type: number
     sql: 1.0*(${total_repeat_orders}/nullif(${total_orders},0)) ;;
+    value_format_name: percent_2
   }
 
   measure: repeat_purchase_rate_60_days{

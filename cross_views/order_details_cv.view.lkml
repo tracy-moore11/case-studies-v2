@@ -92,4 +92,5 @@ view: order_details_cv {
       value_format_name: percent_2
       view_label: "Order Details"
     }
+
 }
