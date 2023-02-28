@@ -1,7 +1,6 @@
 include: "/views/users.view.lkml"
 include: "/derived_views/orders_ranked.view.lkml"
 include: "/derived_views/cust_behavior.view.lkml"
-include: "/cross_views/orders_ranked_cv.view.lkml"
 
 
 explore: customers {
@@ -17,8 +16,4 @@ explore: customers {
     sql_on: ${customers.id}=${orders_ranked.user_id} ;;
     relationship: one_to_many
   }
-  join: orders_ranked_cv {
-    relationship: one_to_one
-    sql: ;;
-}
 }
