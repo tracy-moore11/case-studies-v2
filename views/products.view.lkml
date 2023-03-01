@@ -18,6 +18,7 @@ view: products {
   dimension: category {
     type: string
     sql: ${TABLE}.category ;;
+    drill_fields: [category_details*]
   }
 
   dimension: cost {
@@ -48,6 +49,10 @@ view: products {
 
   set: brand_details {
     fields: [category, name]
+  }
+
+  set: category_details {
+    fields: [brand, name]
   }
 
   parameter: select_category {

@@ -216,16 +216,14 @@ view: order_items {
 
   measure: num_total_orders_mtd {
     type: count_distinct
-    filters: [iscomplete: "yes", mtd_only: "yes"]
+    filters: [mtd_only: "yes"]
     sql: ${order_id} ;;
-    value_format_name: usd
   }
 
   measure: num_total_orders_ytd {
     type: count_distinct
-    filters: [iscomplete: "yes", ytd_only: "yes"]
+    filters: [ytd_only: "yes"]
     sql: ${order_id} ;;
-    value_format_name: usd
   }
 
 

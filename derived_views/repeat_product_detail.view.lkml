@@ -1,6 +1,6 @@
 view: repeat_product_detail {
   derived_table: {
-    sql: select user_id, order_id,category,brand, row_number() over (partition by user_id, brand order by created_at) as brand_rn,
+    sql: select user_id, order_id,category,brand, name, row_number() over (partition by user_id, brand order by created_at) as brand_rn,
         row_number() over (partition by user_id, category order by created_at) as category_rn
       from order_items oi
         join products p on oi.product_id=p.id
@@ -26,11 +26,18 @@ view: repeat_product_detail {
   dimension: category {
     type: string
     sql: ${TABLE}.category ;;
+    drill_fields: [category_drill*]
   }
 
   dimension: brand {
     type: string
     sql: ${TABLE}.brand ;;
+    drill_fields: [brand_drill*]
+  }
+
+  dimension: name {
+    type: string
+    sql: ${TABLE}.name ;;
   }
 
   dimension: brand_rn {
@@ -66,7 +73,15 @@ view: repeat_product_detail {
     value_format_name: percent_2
   }
 
+  set: brand_drill {
+    fields: [category,name]
+  }
+
+  set:  category_drill{
+    fields: [brand,name]
+  }
+
   set: detail {
-    fields: [user_id, category, brand, brand_rn, category_rn]
+    fields: [user_id, category, brand, name, brand_rn, category_rn]
   }
 }

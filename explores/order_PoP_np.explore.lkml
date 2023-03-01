@@ -3,7 +3,7 @@ include: "/derived_views/orders_ranked.view.lkml"
 explore: pop_np {
   from: order_items_pop_np
   persist_with: daily_etl
-  sql_always_where: ${created_date}<=current_date and ${created_date}>'2020-01-01' ;;
+  sql_always_where: ${created_raw}<=current_timestamp and ${created_date}>'2020-01-01' ;;
   label: "PoP for non pivoted charts"
   join: orders_ranked {
     type: inner
