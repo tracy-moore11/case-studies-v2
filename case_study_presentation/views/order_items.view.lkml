@@ -164,7 +164,7 @@ view: order_items {
   dimension: mtd_only {
     group_label: "To-Date Filters"
     label: "MTD"
-    view_label: "_PoP"
+    view_label: "_orders_PoP"
     type: yesno
     sql:  EXTRACT(DAY FROM ${created_raw}) <= EXTRACT(DAY FROM current_date) ;;
   }
@@ -172,7 +172,7 @@ view: order_items {
   dimension: ytd_only {
     group_label: "To-Date Filters"
     label: "YTD"
-    view_label: "_PoP"
+    view_label: "_orders_PoP"
     type: yesno
     sql:  EXTRACT(DAYOFYEAR FROM ${created_raw}) <= EXTRACT(DAYOFYEAR FROM current_date) ;;
   }
@@ -244,7 +244,7 @@ view: order_items {
 
   parameter: choose_comparison {
     label: "Choose Comparison (Pivot)"
-    view_label: "_PoP_np"
+    view_label: "_orders_PoP"
     type: unquoted
     default_value: "Year"
     allowed_value: {value: "Year"}
@@ -252,7 +252,7 @@ view: order_items {
   }
 
   dimension: pop_row {
-    view_label: "_PoP_np"
+    view_label: "_orders_PoP"
     label_from_parameter: choose_comparison
     type: string
     order_by_field: sort_hack2
@@ -277,7 +277,7 @@ view: order_items {
   dimension: mtd_only_pop {
     group_label: "To-Date Filters"
     label: "MTD"
-    view_label: "_PoP"
+    view_label: "_orders_PoP"
     type: yesno
     sql:  EXTRACT(DAY FROM ${created_raw}) <= EXTRACT(DAY FROM current_date) ;;
   }
@@ -285,12 +285,13 @@ view: order_items {
   dimension: ytd_only_pop {
     group_label: "To-Date Filters"
     label: "YTD"
-    view_label: "_PoP"
+    view_label: "_orders_PoP"
     type: yesno
     sql:  EXTRACT(DAYOFYEAR FROM ${created_raw}) <= EXTRACT(DAYOFYEAR FROM current_date) ;;
   }
   measure: gross_revenue_dyn_pop {
     label: "Gross Revenue"
+    view_label: "_orders_PoP"
     type: number
     sql:{% if show_to_date._parameter_value == 'Yes' and choose_comparison._parameter_value == 'Year' %}
             ${gross_revenue_ytd_pop}
@@ -318,6 +319,8 @@ view: order_items {
   }
 
   measure: num_total_orders_dyn_pop {
+    view_label: "_orders_PoP"
+    label: "Number of Total Orders"
     type: number
     sql:{% if show_to_date._parameter_value == 'Yes' and choose_comparison._parameter_value == 'Year' %}
             ${num_total_orders_ytd_pop}

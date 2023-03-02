@@ -7,6 +7,7 @@ explore: customers {
   label: "Customers"
   group_label: "Tracy M Case Studies"
   persist_with: daily_etl
+  sql_always_where: ${created_raw}>='2020-01-01' and ${created_date}<current_date ;;
   from: users
   join: cust_behavior {
     type: left_outer

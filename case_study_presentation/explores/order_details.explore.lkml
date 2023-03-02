@@ -8,6 +8,7 @@ include: "/case_study_presentation/cross_views/customers_cv.view.lkml"
 explore: order_details {
   label: "Case Study Order Details"
   group_label: "Tracy M Case Studies"
+  sql_always_where: ${created_raw}>='2020-01-01' and ${created_date}<current_date ;;
   persist_with: daily_etl
   from: order_items
   join: users {

@@ -132,7 +132,7 @@ view: users {
   dimension: ytd_only {
     group_label: "To-Date Filters"
     label: "YTD"
-    view_label: "_PoP"
+    view_label: "_users_PoP"
     type: yesno
     sql:  EXTRACT(DAYOFYEAR FROM ${created_raw}) <= EXTRACT(DAYOFYEAR FROM current_date) ;;
   }
@@ -169,7 +169,7 @@ view: users {
 
   parameter: choose_comparison {
     label: "Choose Comparison (Pivot)"
-    view_label: "_PoP_np"
+    view_label: "users_PoP"
     type: unquoted
     default_value: "Year"
     allowed_value: {value: "Year"}
@@ -177,7 +177,7 @@ view: users {
   }
 
   dimension: pop_row {
-    view_label: "_PoP_np"
+    view_label: "users_PoP"
     label_from_parameter: choose_comparison
     type: string
     order_by_field: sort_hack2
@@ -202,7 +202,7 @@ view: users {
   dimension: mtd_only_pop {
     group_label: "To-Date Filters"
     label: "MTD"
-    view_label: "_PoP"
+    view_label: "_users_PoP"
     type: yesno
     sql:  EXTRACT(DAY FROM ${created_raw}) <= EXTRACT(DAY FROM current_date) ;;
   }
@@ -210,12 +210,13 @@ view: users {
   dimension: ytd_only_pop {
     group_label: "To-Date Filters"
     label: "YTD"
-    view_label: "_PoP"
+    view_label: "_users_PoP"
     type: yesno
     sql:  EXTRACT(DAYOFYEAR FROM ${created_raw}) <= EXTRACT(DAYOFYEAR FROM current_date) ;;
   }
   measure: signups_dyn_pop {
     label: "Signups"
+    view_label: "_users_PoP"
     type: number
     sql:{% if show_to_date._parameter_value == 'Yes' and choose_comparison._parameter_value == 'Year' %}
             ${signups_ytd_pop}
