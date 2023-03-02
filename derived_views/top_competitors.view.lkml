@@ -1,3 +1,5 @@
+# for brand comparison case study
+# compares brand to top competitor brands in selected category
 include: "/views/products.view.lkml"
 view: top_competitors {
   derived_table: {
@@ -24,6 +26,7 @@ view: top_competitors {
 
   dimension: brand {
     type: string
+    primary_key: yes
     sql: ${TABLE}.brand ;;
   }
 

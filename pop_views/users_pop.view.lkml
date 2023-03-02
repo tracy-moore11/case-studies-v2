@@ -1,6 +1,6 @@
-include: "/views/order_items.view.lkml"
-view: order_items_pop_np {
-  extends: [order_items]
+include: "/views/users.view.lkml"
+view: users_pop {
+  extends: [users]
 
   parameter: choose_comparison {
     label: "Choose Comparison (Pivot)"
@@ -49,58 +49,26 @@ view: order_items_pop_np {
     type: yesno
     sql:  EXTRACT(DAYOFYEAR FROM ${created_raw}) <= EXTRACT(DAYOFYEAR FROM current_date) ;;
   }
-  measure: gross_revenue_dyn {
-    label: "Gross Revenue"
+  measure: signups_dyn {
+    label: "Signups"
     type: number
     sql:{% if show_to_date._parameter_value == 'Yes' and choose_comparison._parameter_value == 'Year' %}
-            ${gross_revenue_ytd}
+            ${signups_ytd}
         {% elsif show_to_date._parameter_value == 'Yes' and choose_comparison._parameter_value=='Month' %}
-            ${gross_revenue_mtd}
+            ${signups_mtd}
         {% else %}
-            ${total_gross_revenue}
-        {% endif %} ;;
-    value_format_name: usd
-  }
-
-  measure: gross_revenue_mtd {
-    type: sum
-    filters: [iscomplete: "yes", mtd_only: "yes"]
-    sql: ${sale_price} ;;
-    value_format_name: usd
-  }
-
-
-  measure: gross_revenue_ytd {
-    type: sum
-    filters: [iscomplete: "yes", ytd_only: "yes"]
-    sql: ${sale_price} ;;
-    value_format_name: usd
-  }
-
-  measure: num_total_orders_dyn {
-    type: number
-    sql:{% if show_to_date._parameter_value == 'Yes' and choose_comparison._parameter_value == 'Year' %}
-            ${num_total_orders_ytd}
-        {% elsif show_to_date._parameter_value == 'Yes' and choose_comparison._parameter_value=='Month' %}
-            ${num_total_orders_mtd}
-        {% else %}
-            ${num_total_orders}
+            ${count}
         {% endif %} ;;
   }
 
-  measure: num_total_orders_mtd {
-    type: count_distinct
+  measure: signups_mtd {
+    type: count
     filters: [mtd_only: "yes"]
-    sql: ${order_id} ;;
   }
 
-  measure: num_total_orders_ytd {
-    type: count_distinct
+
+  measure: signups_ytd {
+    type: count
     filters: [ytd_only: "yes"]
-    sql: ${order_id} ;;
   }
-
-
-
-
-}
+  }

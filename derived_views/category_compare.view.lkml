@@ -1,3 +1,5 @@
+# for brand comparison case study
+# compares selected brand's top categories other to the selected category
 view: category_compare {
   derived_table: {
     sql: select *, rank() over (partition by iscategory order by revenue desc) as rank
@@ -20,6 +22,7 @@ view: category_compare {
   }
 
   dimension: category {
+    primary_key: yes
     type: string
     sql: ${TABLE}.category ;;
   }

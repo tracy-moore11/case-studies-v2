@@ -137,6 +137,7 @@ view: users {
     sql:  EXTRACT(DAYOFYEAR FROM ${created_raw}) <= EXTRACT(DAYOFYEAR FROM current_date) ;;
   }
   measure: signups_dyn {
+    label: "Signups"
     type: number
     sql:{% if show_to_date._parameter_value == 'Yes' %}
             ${signups_ytd}

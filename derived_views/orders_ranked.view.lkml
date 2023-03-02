@@ -1,3 +1,5 @@
+# order items ranked which gives timeline of orders by user
+# used to calculate return order metrics and customer order patterns
 view: orders_ranked {
   derived_table: {
     sql: with order_dates as (

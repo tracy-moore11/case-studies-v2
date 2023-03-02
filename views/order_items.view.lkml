@@ -178,6 +178,7 @@ view: order_items {
   }
   measure: gross_revenue_dyn {
     type: number
+    label: "Gross Revenue"
     sql:{% if show_to_date._parameter_value == 'Yes' %}
             ${gross_revenue_ytd}
         {% elsif show_to_date._parameter_value == 'Yes' %}

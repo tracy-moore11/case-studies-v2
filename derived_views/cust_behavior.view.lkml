@@ -1,3 +1,5 @@
+# pdt that calculates metrics based on customer lifetime
+
 view: cust_behavior {
   derived_table: {
     explore_source: order_details {

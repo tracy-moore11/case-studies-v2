@@ -4,6 +4,8 @@ include: "/derived_views/cust_behavior.view.lkml"
 
 
 explore: customers {
+  label: "Customers"
+  group_label: "Tracy M Case Studies"
   persist_with: daily_etl
   from: users
   join: cust_behavior {

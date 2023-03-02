@@ -1,6 +1,9 @@
+# view that specifically sees if a brand or category was purchased multiple times by the same customer
+# used for repeat product information
+
 view: repeat_product_detail {
   derived_table: {
-    sql: select user_id, order_id,category,brand, name, row_number() over (partition by user_id, brand order by created_at) as brand_rn,
+    sql: select user_id, order_id, created_at,category,brand, name, row_number() over (partition by user_id, brand order by created_at) as brand_rn,
         row_number() over (partition by user_id, category order by created_at) as category_rn
       from order_items oi
         join products p on oi.product_id=p.id
@@ -10,6 +13,20 @@ view: repeat_product_detail {
   measure: count {
     type: count
     drill_fields: [detail*]
+  }
+
+  dimension_group: created {
+    type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    sql: ${TABLE}.created_at ;;
   }
 
   dimension: user_id {
