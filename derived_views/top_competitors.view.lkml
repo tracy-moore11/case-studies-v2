@@ -1,6 +1,6 @@
 # for brand comparison case study
 # compares brand to top competitor brands in selected category
-include: "/views/products.view.lkml"
+include: "/case_study_presentation/views/products.view.lkml"
 view: top_competitors {
   derived_table: {
     sql:

@@ -1,6 +1,6 @@
-include: "/views/users.view.lkml"
-include: "/derived_views/orders_ranked.view.lkml"
-include: "/derived_views/cust_behavior.view.lkml"
+include: "/case_study_presentation/views/users.view.lkml"
+include: "/case_study_presentation/derived_views/orders_ranked.view.lkml"
+include: "/case_study_presentation/derived_views/cust_behavior.view.lkml"
 
 
 explore: customers {

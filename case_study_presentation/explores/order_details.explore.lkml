@@ -1,10 +1,9 @@
-include: "/views/order_items.view.lkml"
-include: "/views/users.view.lkml"
-include: "/views/products.view.lkml"
-include: "/derived_views/cust_behavior.view.lkml"
-include: "/derived_views/orders_ranked.view.lkml"
-include: "/cross_views/order_details_cv.view.lkml"
-include: "/cross_views/customers_cv.view.lkml"
+include: "/case_study_presentation/views/order_items.view.lkml"
+include: "/case_study_presentation/views/users.view.lkml"
+include: "/case_study_presentation/views/products.view.lkml"
+include: "/case_study_presentation/derived_views/cust_behavior.view.lkml"
+include: "/case_study_presentation/derived_views/orders_ranked.view.lkml"
+include: "/case_study_presentation/cross_views/customers_cv.view.lkml"
 
 explore: order_details {
   label: "Case Study Order Details"
@@ -30,10 +29,6 @@ explore: order_details {
     type: inner
     sql_on: ${order_details.order_id}=${orders_ranked.order_id} ;;
     relationship: many_to_one
-  }
-  join: order_details_cv {
-    relationship: one_to_one
-    sql:  ;;
   }
   join: customers_cv {
     relationship: one_to_one

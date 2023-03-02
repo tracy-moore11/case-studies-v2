@@ -3,7 +3,7 @@
 
 view: repeat_product_detail {
   derived_table: {
-    sql: select user_id, order_id, created_at,category,brand, name, row_number() over (partition by user_id, brand order by created_at) as brand_rn,
+    sql: select user_id, oi.id as order_item_id, order_id, product_id, created_at,category,brand, name, row_number() over (partition by user_id, brand order by created_at) as brand_rn,
         row_number() over (partition by user_id, category order by created_at) as category_rn
       from order_items oi
         join products p on oi.product_id=p.id
@@ -34,10 +34,15 @@ view: repeat_product_detail {
     sql: ${TABLE}.user_id ;;
   }
 
+  dimension: order_item_id {
+    type: number
+    sql: ${TABLE}.order_item_id ;;
+    primary_key: yes
+  }
+
   dimension: order_id {
     type: number
     sql: ${TABLE}.order_id ;;
-    primary_key: yes
   }
 
   dimension: category {
@@ -65,6 +70,11 @@ view: repeat_product_detail {
   dimension: category_rn {
     type: number
     sql: ${TABLE}.category_rn ;;
+  }
+
+  dimension: product_id {
+    type: number
+    sql: ${TABLE}.product_id ;;
   }
 
   measure: total_brand_repeat_orders {
