@@ -4,13 +4,6 @@ view: users {
     ;;
   drill_fields: [id]
 
-  dimension: id {
-    primary_key: yes
-    type: number
-    hidden: yes
-    sql: ${TABLE}.id ;;
-  }
-
   dimension: age {
     type: number
     hidden: yes
@@ -72,6 +65,13 @@ view: users {
     sql: ${TABLE}.gender ;;
   }
 
+  dimension: id {
+    primary_key: yes
+    type: number
+    hidden: yes
+    sql: ${TABLE}.id ;;
+  }
+
   dimension: months_since_signup {
     type: number
     sql: date_diff(current_date,${created_date},month) ;;
@@ -84,6 +84,33 @@ view: users {
     style: integer
   }
 
+  dimension: mtd_only {
+    group_label: "To-Date Filters"
+    label: "MTD"
+    view_label: "_users_PoP"
+    type: yesno
+    sql:  EXTRACT(DAY FROM ${created_raw}) <= EXTRACT(DAY FROM current_date) ;;
+  }
+
+  dimension: pop_row {
+    view_label: "users_PoP"
+    label_from_parameter: choose_comparison
+    type: string
+    order_by_field: sort_hack2
+    sql:
+    {% if choose_comparison._parameter_value == 'Year' %} ${created_year}
+    {% elsif choose_comparison._parameter_value == 'Month' %} ${created_month}
+    {% else %}NULL{% endif %};;
+  }
+
+  dimension: sort_hack2 {
+    type: string
+    sql:
+    {% if choose_comparison._parameter_value == 'Year' %} ${created_year}
+    {% elsif choose_comparison._parameter_value == 'Month' %} ${created_month}
+    {% else %}NULL{% endif %};;
+  }
+
   dimension: state {
     type: string
     sql: ${TABLE}.state ;;
@@ -93,6 +120,16 @@ view: users {
     type: string
     sql: ${TABLE}.traffic_source ;;
     drill_fields: [user_details*]
+  }
+
+
+
+  dimension: ytd_only {
+    group_label: "To-Date Filters"
+    label: "YTD"
+    view_label: "_users_PoP"
+    type: yesno
+    sql:  EXTRACT(DAYOFYEAR FROM ${created_raw}) <= EXTRACT(DAYOFYEAR FROM current_date) ;;
   }
 
 
@@ -116,32 +153,23 @@ view: users {
     type: count
   }
 
-  parameter: show_to_date {
-    type: unquoted
-    allowed_value: {value: "Yes"}
-    allowed_value: {value:"No"}
-  }
-  dimension: mtd_only {
-    group_label: "To-Date Filters"
-    label: "MTD"
-    view_label: "_PoP"
-    type: yesno
-    sql:  EXTRACT(DAY FROM ${created_raw}) <= EXTRACT(DAY FROM current_date) ;;
-  }
-
-  dimension: ytd_only {
-    group_label: "To-Date Filters"
-    label: "YTD"
-    view_label: "_users_PoP"
-    type: yesno
-    sql:  EXTRACT(DAYOFYEAR FROM ${created_raw}) <= EXTRACT(DAYOFYEAR FROM current_date) ;;
-  }
   measure: signups_dyn {
     label: "Signups"
     type: number
     sql:{% if show_to_date._parameter_value == 'Yes' %}
             ${signups_ytd}
-        {% elsif show_to_date._parameter_value == 'Yes' %}
+        {% else %}
+            ${count}
+        {% endif %} ;;
+  }
+
+  measure: signups_dyn_pop {
+    label: "Signups"
+    view_label: "_users_PoP"
+    type: number
+    sql:{% if show_to_date._parameter_value == 'Yes' and choose_comparison._parameter_value == 'Year' %}
+            ${signups_ytd}
+        {% elsif show_to_date._parameter_value == 'Yes' and choose_comparison._parameter_value=='Month' %}
             ${signups_mtd}
         {% else %}
             ${count}
@@ -153,20 +181,12 @@ view: users {
     filters: [mtd_only: "yes"]
   }
 
-
   measure: signups_ytd {
     type: count
     filters: [ytd_only: "yes"]
   }
 
-  set: location_details {
-    fields: [state,city]
-  }
-
-  set: user_details {
-    fields: [gender, age_tier]
-  }
-
+  ##--PARAMETERS--##
   parameter: choose_comparison {
     label: "Choose Comparison (Pivot)"
     view_label: "users_PoP"
@@ -175,66 +195,18 @@ view: users {
     allowed_value: {value: "Year"}
     allowed_value: {value: "Month"}
   }
-
-  dimension: pop_row {
-    view_label: "users_PoP"
-    label_from_parameter: choose_comparison
-    type: string
-    order_by_field: sort_hack2
-    sql:
-    {% if choose_comparison._parameter_value == 'Year' %} ${created_year}
-    {% elsif choose_comparison._parameter_value == 'Month' %} ${created_month}
-    {% else %}NULL{% endif %};;
+  parameter: show_to_date {
+    type: unquoted
+    allowed_value: {value: "Yes"}
+    allowed_value: {value:"No"}
   }
 
-  dimension: sort_hack2 {
-    type: string
-    sql:
-    {% if choose_comparison._parameter_value == 'Year' %} ${created_year}
-    {% elsif choose_comparison._parameter_value == 'Month' %} ${created_month}
-    {% else %}NULL{% endif %};;
-  }
-  # parameter: show_to_date {
-  #   type: unquoted
-  #   allowed_value: {value: "Yes"}
-  #   allowed_value: {value:"No"}
-  # }
-  dimension: mtd_only_pop {
-    group_label: "To-Date Filters"
-    label: "MTD"
-    view_label: "_users_PoP"
-    type: yesno
-    sql:  EXTRACT(DAY FROM ${created_raw}) <= EXTRACT(DAY FROM current_date) ;;
+##--DRILL FIELDS--##
+  set: location_details {
+    fields: [state,city]
   }
 
-  dimension: ytd_only_pop {
-    group_label: "To-Date Filters"
-    label: "YTD"
-    view_label: "_users_PoP"
-    type: yesno
-    sql:  EXTRACT(DAYOFYEAR FROM ${created_raw}) <= EXTRACT(DAYOFYEAR FROM current_date) ;;
-  }
-  measure: signups_dyn_pop {
-    label: "Signups"
-    view_label: "_users_PoP"
-    type: number
-    sql:{% if show_to_date._parameter_value == 'Yes' and choose_comparison._parameter_value == 'Year' %}
-            ${signups_ytd_pop}
-        {% elsif show_to_date._parameter_value == 'Yes' and choose_comparison._parameter_value=='Month' %}
-            ${signups_mtd_pop}
-        {% else %}
-            ${count}
-        {% endif %} ;;
-  }
-
-  measure: signups_mtd_pop {
-    type: count
-    filters: [mtd_only: "yes"]
-  }
-
-
-  measure: signups_ytd_pop {
-    type: count
-    filters: [ytd_only: "yes"]
+  set: user_details {
+    fields: [gender, age_tier]
   }
 }

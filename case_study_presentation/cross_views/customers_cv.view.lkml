@@ -1,36 +1,45 @@
 view: customers_cv {
+
+  ##--dimensions--##
+  dimension: customer_lifespan {
+    type: number
+    sql: date_diff(${cust_behavior.latest_order_date},${users.created_date},month) ;;
+    view_label: "Users"
+  }
+
+  dimension: days_since_signup {
+    type: number
+    sql: date_diff(${order_details.created_date},${users.created_date},day) ;;
+  }
+
+  dimension: days_to_first_order {
+    type: number
+    sql: date_diff(${cust_behavior.first_order_date},${users.created_date},day) ;;
+    view_label: "Order Details"
+  }
+
   dimension: has_order_last_30_days {
     type: yesno
     sql: date_diff(current_date,${cust_behavior.latest_order_date},day)<=30 ;;
   }
 
-  dimension: has_order_last_90_days {
+  dimension: is_new_customer {
     type: yesno
-    sql: date_diff(current_date,${cust_behavior.latest_order_date},day)<=90 ;;
+    sql: date_diff(current_date,${users.created_date},day)<=90 ;;
+    view_label: "Users"
   }
 
-  measure: num_repeat_orders {
-    type: count_distinct
-    filters: [cust_behavior.is_repeat_customer: "yes"]
-    sql: ${order_details.order_id} ;;
-  }
-
-  measure: percent_repeat_customers{
+  dimension: margin {
     type: number
-    sql: ${num_repeat_orders}/${order_details.num_total_orders} ;;
-    value_format_name: percent_2
+    sql: ${order_details.sale_price}-${products.cost} ;;
+    view_label: "Order Details"
   }
 
-  measure: total_users_last_90_days {
-    type: count_distinct
-    sql: ${order_details.user_id} ;;
-    filters: [customers_cv.has_order_last_90_days: "yes"]
+  dimension:months_since_signup {
+    type: number
+    sql: date_diff(${order_details.created_date},${users.created_date},month) ;;
   }
-  parameter: show_to_date {
-    type: unquoted
-    allowed_value: {value: "Yes"}
-    allowed_value: {value:"No"}
-  }
+
   dimension: mtd_only {
     group_label: "To-Date Filters"
     label: "MTD"
@@ -46,6 +55,50 @@ view: customers_cv {
     type: yesno
     sql:  EXTRACT(DAYOFYEAR FROM ${users.created_raw}) <= EXTRACT(DAYOFYEAR FROM current_date) ;;
   }
+
+  ##--measures--##
+
+  measure: average_cost {
+    type: average
+    sql: ${products.cost} ;;
+    view_label: "Products"
+  }
+
+  measure: average_customer_lifespan {
+    type: average
+    sql: ${customer_lifespan} ;;
+    value_format_name: decimal_0
+    view_label: "Users"
+  }
+
+  measure: average_days_to_first_order {
+    type: average
+    sql: ${days_to_first_order} ;;
+    value_format_name: decimal_0
+    view_label: "Order Details"
+  }
+
+  measure: average_gross_margin {
+    type: average
+    filters: [order_details.iscomplete: "yes"]
+    sql: ${margin} ;;
+    view_label: "Order Details"
+  }
+
+  measure: average_spend_per_customer {
+    type: number
+    sql: ${order_details.total_sale_price}/${order_details.num_total_users} ;;
+    value_format_name: usd
+    view_label: "Order Details"
+  }
+
+  measure: gross_margin_percent {
+    type: number
+    sql: ${total_gross_margin}/nullif(${order_details.total_gross_revenue},0) ;;
+    value_format_name: percent_2
+    view_label: "Order Details"
+  }
+
   measure: gross_revenue_dyn {
     type: number
     sql:{% if show_to_date._parameter_value == 'Yes' %}
@@ -73,82 +126,21 @@ view: customers_cv {
     value_format_name: usd
   }
 
-  dimension: margin {
+  measure: num_repeat_orders {
+    type: count_distinct
+    filters: [cust_behavior.is_repeat_customer: "yes"]
+    sql: ${order_details.order_id} ;;
+  }
+
+  measure: percent_repeat_customers{
     type: number
-    sql: ${order_details.sale_price}-${products.cost} ;;
-    view_label: "Order Details"
+    sql: ${num_repeat_orders}/${order_details.num_total_orders} ;;
+    value_format_name: percent_2
   }
 
   measure:total_cost {
     type: sum
     sql: ${products.cost} ;;
-
-  }
-
-  measure: average_cost {
-    type: average
-    sql: ${products.cost} ;;
-    view_label: "Products"
-  }
-
-  set: product_dd {
-    fields: [products.name,order_details.total_gross_margin,order_details.total_gross_revenue, order_details.gross_margin_percent]
-  }
-
-  dimension: customer_lifespan {
-    type: number
-    sql: date_diff(${cust_behavior.latest_order_date},${users.created_date},month) ;;
-    view_label: "Users"
-  }
-
-  dimension: days_since_signup {
-    type: number
-    sql: date_diff(${order_details.created_date},${users.created_date},day) ;;
-  }
-
-  dimension: is_new_customer {
-    type: yesno
-    sql: date_diff(current_date,${users.created_date},day)<=90 ;;
-    view_label: "Users"
-  }
-
-  dimension:months_since_signup {
-    type: number
-    sql: date_diff(${order_details.created_date},${users.created_date},month) ;;
-  }
-
-  dimension: days_to_first_order {
-    type: number
-    sql: date_diff(${cust_behavior.first_order_date},${users.created_date},day) ;;
-    view_label: "Order Details"
-  }
-
-  measure: average_spend_per_customer {
-    type: number
-    sql: ${order_details.total_sale_price}/${order_details.num_total_users} ;;
-    value_format_name: usd
-    view_label: "Order Details"
-  }
-
-  measure: average_customer_lifespan {
-    type: average
-    sql: ${customer_lifespan} ;;
-    value_format_name: decimal_0
-    view_label: "Users"
-  }
-
-  measure: average_gross_margin {
-    type: average
-    filters: [order_details.iscomplete: "yes"]
-    sql: ${margin} ;;
-    view_label: "Order Details"
-  }
-
-  measure: average_days_to_first_order {
-    type: average
-    sql: ${days_to_first_order} ;;
-    value_format_name: decimal_0
-    view_label: "Order Details"
   }
 
   measure:total_gross_margin {
@@ -160,11 +152,14 @@ view: customers_cv {
     view_label: "Order Details"
   }
 
-  measure: gross_margin_percent {
-    type: number
-    sql: ${total_gross_margin}/nullif(${order_details.total_gross_revenue},0) ;;
-    value_format_name: percent_2
-    view_label: "Order Details"
+##--parameters--##
+  parameter: show_to_date {
+    type: unquoted
+    allowed_value: {value: "Yes"}
+    allowed_value: {value:"No"}
   }
 
+  set: product_dd {
+    fields: [products.name,order_details.total_gross_margin,order_details.total_gross_revenue, order_details.gross_margin_percent]
+  }
   }

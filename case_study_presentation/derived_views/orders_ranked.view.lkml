@@ -21,24 +21,19 @@ order_rank as (
       ;;
   }
 
-  # measure: count {
-  #   type: count
-  #   drill_fields: [detail*]
-  # }
-
   dimension: daysbetweenorders {
     type: number
     sql: date_diff(${order_start_date_date},${previous_order_date_date},day) ;;
   }
 
-  dimension: has_order_last_30_days {
-    type: yesno
-    sql: date_diff(current_date,${order_start_date_date},day)<=30 ;;
-  }
-
   dimension: hassubsequentorder {
     type: yesno
     sql: ${next_order_id} is not null ;;
+  }
+
+  dimension: has_order_last_30_days {
+    type: yesno
+    sql: date_diff(current_date,${order_start_date_date},day)<=30 ;;
   }
 
   dimension: isfirstpurchase {
@@ -54,6 +49,64 @@ order_rank as (
   dimension: isrepeatorder {
     type: yesno
     sql: ${order_sequence}>1;;
+  }
+
+  dimension_group: next_order_date {
+    type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    sql: ${TABLE}.next_order_date ;;
+  }
+
+  dimension: next_order_id {
+    type: number
+    sql: ${TABLE}.next_order_id ;;
+  }
+
+  dimension: order_id {
+    type: number
+    primary_key: yes
+    sql: ${TABLE}.order_id ;;
+  }
+
+  dimension_group: order_end_date {
+    type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    sql: ${TABLE}.order_end_date ;;
+  }
+
+  dimension: order_sequence {
+    type: number
+    sql: ${TABLE}.rn ;;
+  }
+
+  dimension_group: order_start_date {
+    type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    sql: ${TABLE}.order_start_date ;;
   }
 
   dimension_group: previous_order_date {
@@ -75,69 +128,9 @@ order_rank as (
     sql: ${TABLE}.last_order_id ;;
   }
 
-  dimension: next_order_id {
-    type: number
-    sql: ${TABLE}.next_order_id ;;
-  }
-
-  dimension_group: next_order_date {
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
-    ]
-    sql: ${TABLE}.next_order_date ;;
-  }
-
-  dimension: order_id {
-    type: number
-    primary_key: yes
-    sql: ${TABLE}.order_id ;;
-  }
-
-  dimension_group: order_start_date {
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
-    ]
-    sql: ${TABLE}.order_start_date ;;
-  }
-
-  dimension_group: order_end_date {
-    type: time
-    timeframes: [
-      raw,
-      time,
-      date,
-      week,
-      month,
-      quarter,
-      year
-    ]
-    sql: ${TABLE}.order_end_date ;;
-  }
-
   dimension: repeat_purchase_60_days{
     type: yesno
     sql: ${daysbetweenorders}<=60 AND ${order_sequence}=2 ;;
-  }
-
-
-
-  dimension: order_sequence {
-    type: number
-    sql: ${TABLE}.rn ;;
   }
 
   dimension: user_id {
@@ -145,16 +138,19 @@ order_rank as (
     sql: ${TABLE}.user_id ;;
   }
 
-  measure: average_daysbetweenorders {
-    type: average
-    sql: ${daysbetweenorders} ;;
-    value_format_name: decimal_0
-  }
+
+##--measures--##
 
   measure: average_daysbetween_firstandsecond_orders {
     type: average
     sql: ${daysbetweenorders} ;;
     filters: [order_sequence: "2"]
+    value_format_name: decimal_0
+  }
+
+  measure: average_daysbetweenorders {
+    type: average
+    sql: ${daysbetweenorders} ;;
     value_format_name: decimal_0
   }
 

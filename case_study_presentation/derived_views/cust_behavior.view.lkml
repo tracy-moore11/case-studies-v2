@@ -12,25 +12,22 @@ view: cust_behavior {
     }
   }
 
+##--dimensions--##
 
-  dimension: user_id {
-    primary_key: yes
-    description: ""
-    type: number
+  dimension: customer_lifetime_orders {
+    type: tier
+    tiers: [1, 2, 3, 6, 10]
+    sql: ${num_total_orders} ;;
+    style:  integer
   }
-  dimension: num_total_orders {
-    description: ""
-    type: number
+  dimension: customer_lifetime_revenue {
+    type: tier
+    tiers: [0, 5, 20, 50, 100, 500, 1000]
+    sql: ${total_gross_revenue} ;;
+    style:  integer
+    value_format_name: usd_0
   }
 
-  dimension: total_sale_price {
-    type: number
-    value_format_name: usd
-  }
-  dimension: total_gross_revenue {
-    value_format_name: usd
-    type: number
-  }
   dimension: first_order_date {
     description: ""
     type: date
@@ -50,26 +47,34 @@ view: cust_behavior {
     type: yesno
     sql: ${num_total_orders}>1 ;;
   }
+
   dimension: latest_order_date {
     description: ""
     type: date
   }
 
-  dimension: customer_lifetime_orders {
-    type: tier
-    tiers: [1, 2, 3, 6, 10]
-    sql: ${num_total_orders} ;;
-    style:  integer
-  }
-  dimension: customer_lifetime_revenue {
-    type: tier
-    tiers: [0, 5, 20, 50, 100, 500, 1000]
-    sql: ${total_gross_revenue} ;;
-    style:  integer
-    value_format_name: usd_0
+  dimension: num_total_orders {
+    description: ""
+    type: number
   }
 
+  dimension: total_gross_revenue {
+    value_format_name: usd
+    type: number
+  }
 
+  dimension: total_sale_price {
+    type: number
+    value_format_name: usd
+  }
+
+  dimension: user_id {
+    primary_key: yes
+    description: ""
+    type: number
+  }
+
+##--measures--##
 
   measure: average_lifetime_orders {
     type: average
@@ -87,8 +92,6 @@ view: cust_behavior {
     sql: ${total_sale_price} ;;
     value_format_name: usd
   }
-
-
 
   measure: total_customers {
     type: count

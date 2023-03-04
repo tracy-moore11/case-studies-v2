@@ -3,12 +3,7 @@ view: products {
     ;;
   drill_fields: [id]
 
-  dimension: id {
-    primary_key: yes
-    type: number
-    sql: ${TABLE}.id ;;
-  }
-
+##--DIMENSIONS--##
   dimension: brand {
     type: string
     sql: ${TABLE}.brand ;;
@@ -27,14 +22,10 @@ view: products {
     sql: ${TABLE}.cost ;;
   }
 
-  measure: total_cost {
-    type: sum
-    sql: ${cost} ;;
-  }
-
-  measure: average_cost {
-    type: average
-    sql: ${cost} ;;
+  dimension: id {
+    primary_key: yes
+    type: number
+    sql: ${TABLE}.id ;;
   }
 
   dimension: name {
@@ -42,18 +33,30 @@ view: products {
     sql: ${TABLE}.name ;;
   }
 
+##--MEASURES--##
+
+  measure: average_cost {
+    type: average
+    sql: ${cost} ;;
+  }
+
   measure: count {
     type: count
     drill_fields: [detail*]
   }
 
-  set: brand_details {
-    fields: [category, name]
+  measure: total_cost {
+    type: sum
+    sql: ${cost} ;;
   }
 
-  set: category_details {
-    fields: [brand, name]
+##--PARAMETERS--##
+  parameter: selected_brand {
+    type: string
+    suggest_dimension: brand
+    default_value: "Calvin Klein"
   }
+
 
   parameter: select_category {
     type: string
@@ -61,13 +64,14 @@ view: products {
     default_value: "Jeans"
   }
 
-  parameter: selected_brand {
-    type: string
-    suggest_dimension: brand
-    default_value: "Calvin Klein"
+  ##--DRILL FIELDS--##
+  set: brand_details {
+    fields: [category, name]
   }
 
-  # ----- Sets of fields for drilling ------
+  set: category_details {
+    fields: [brand, name]
+  }
   set: detail {
     fields: [
       id,

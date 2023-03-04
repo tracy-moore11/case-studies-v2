@@ -10,9 +10,26 @@ view: repeat_product_detail {
        ;;
   }
 
-  measure: count {
-    type: count
-    drill_fields: [detail*]
+  dimension: brand {
+    type: string
+    sql: ${TABLE}.brand ;;
+    drill_fields: [brand_drill*]
+  }
+
+  dimension: brand_rn {
+    type: number
+    sql: ${TABLE}.brand_rn ;;
+  }
+
+  dimension: category {
+    type: string
+    sql: ${TABLE}.category ;;
+    drill_fields: [category_drill*]
+  }
+
+  dimension: category_rn {
+    type: number
+    sql: ${TABLE}.category_rn ;;
   }
 
   dimension_group: created {
@@ -29,15 +46,9 @@ view: repeat_product_detail {
     sql: ${TABLE}.created_at ;;
   }
 
-  dimension: user_id {
-    type: number
-    sql: ${TABLE}.user_id ;;
-  }
-
-  dimension: order_item_id {
-    type: number
-    sql: ${TABLE}.order_item_id ;;
-    primary_key: yes
+  dimension: name {
+    type: string
+    sql: ${TABLE}.name ;;
   }
 
   dimension: order_id {
@@ -45,31 +56,11 @@ view: repeat_product_detail {
     sql: ${TABLE}.order_id ;;
   }
 
-  dimension: category {
-    type: string
-    sql: ${TABLE}.category ;;
-    drill_fields: [category_drill*]
-  }
 
-  dimension: brand {
-    type: string
-    sql: ${TABLE}.brand ;;
-    drill_fields: [brand_drill*]
-  }
-
-  dimension: name {
-    type: string
-    sql: ${TABLE}.name ;;
-  }
-
-  dimension: brand_rn {
+  dimension: order_item_id {
     type: number
-    sql: ${TABLE}.brand_rn ;;
-  }
-
-  dimension: category_rn {
-    type: number
-    sql: ${TABLE}.category_rn ;;
+    sql: ${TABLE}.order_item_id ;;
+    primary_key: yes
   }
 
   dimension: product_id {
@@ -77,16 +68,12 @@ view: repeat_product_detail {
     sql: ${TABLE}.product_id ;;
   }
 
-  measure: total_brand_repeat_orders {
-    type: count
-    filters: [brand_rn: ">1"]
-
+  dimension: user_id {
+    type: number
+    sql: ${TABLE}.user_id ;;
   }
 
-  measure: total_category_repeat_orders{
-    type: count
-    filters: [category_rn: ">1"]
-  }
+##--measures--##
 
   measure: brand_repeat_rate {
     type: number
@@ -100,6 +87,23 @@ view: repeat_product_detail {
     value_format_name: percent_2
   }
 
+  measure: count {
+    type: count
+    drill_fields: [detail*]
+  }
+
+  measure: total_brand_repeat_orders {
+    type: count
+    filters: [brand_rn: ">1"]
+
+  }
+
+  measure: total_category_repeat_orders{
+    type: count
+    filters: [category_rn: ">1"]
+  }
+
+##--drill fields--##
   set: brand_drill {
     fields: [category,name]
   }
