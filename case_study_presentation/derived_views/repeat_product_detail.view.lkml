@@ -3,7 +3,7 @@
 
 view: repeat_product_detail {
   derived_table: {
-    sql: select user_id, oi.id as order_item_id, order_id, product_id, created_at,category,brand, name, row_number() over (partition by user_id, brand order by created_at) as brand_rn,
+    sql: select user_id, oi.id as order_item_id, order_id, product_id, created_at,category,brand, p.name, row_number() over (partition by user_id, brand order by created_at) as brand_rn,
         row_number() over (partition by user_id, category order by created_at) as category_rn
       from order_items oi
         join products p on oi.product_id=p.id
@@ -13,7 +13,7 @@ view: repeat_product_detail {
   dimension: brand {
     type: string
     sql: ${TABLE}.brand ;;
-    drill_fields: [brand_drill*]
+    # drill_fields: [brand_drill*]
   }
 
   dimension: brand_rn {
@@ -24,7 +24,7 @@ view: repeat_product_detail {
   dimension: category {
     type: string
     sql: ${TABLE}.category ;;
-    drill_fields: [category_drill*]
+    # drill_fields: [category_drill*]
   }
 
   dimension: category_rn {
@@ -95,12 +95,14 @@ view: repeat_product_detail {
   measure: total_brand_repeat_orders {
     type: count
     filters: [brand_rn: ">1"]
+    drill_fields: [detail*]
 
   }
 
   measure: total_category_repeat_orders{
     type: count
     filters: [category_rn: ">1"]
+    drill_fields: [detail*]
   }
 
 ##--drill fields--##
@@ -113,6 +115,6 @@ view: repeat_product_detail {
   }
 
   set: detail {
-    fields: [user_id, category, brand, name, brand_rn, category_rn]
+    fields: [category, brand, name]
   }
 }
