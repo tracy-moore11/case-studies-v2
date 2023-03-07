@@ -138,6 +138,12 @@ view: customers_cv {
     value_format_name: percent_2
   }
 
+  ##for testing
+  measure: sum_days_to_first_order {
+    type: sum
+    sql: ${days_to_first_order} ;;
+  }
+
   measure:total_cost {
     type: sum
     sql: ${products.cost} ;;
