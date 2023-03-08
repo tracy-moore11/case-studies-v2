@@ -23,6 +23,11 @@ view: customers_cv {
     sql: date_diff(current_date,${cust_behavior.latest_order_date},day)<=30 ;;
   }
 
+  dimension: has_order_last_90_days {
+    type: yesno
+    sql: date_diff(current_date, ${cust_behavior.latest_order_date},day)<=90 ;;
+  }
+
   dimension: is_new_customer {
     type: yesno
     sql: date_diff(current_date,${users.created_date},day)<=90 ;;
@@ -124,6 +129,12 @@ view: customers_cv {
     filters: [order_details.iscomplete: "yes", ytd_only: "yes"]
     sql: ${order_details.sale_price} ;;
     value_format_name: usd
+  }
+
+  measure: num_customers_90_days {
+    type: count_distinct
+    filters: [has_order_last_90_days: "yes"]
+    sql: ${order_details.user_id} ;;
   }
 
   measure: num_repeat_orders {
